@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SINTA - Apoio em Acidentes Ofídicos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="app">
+    <header class="topo">
+      <p class="tag">SINTA • Grupo 11</p>
+      <h1>Identificador de Cobra</h1>
+      <p class="subtitulo">
+        Apoio inicial para classificação de risco e indicação de centros com soro antiofídico.
+      </p>
+    </header>
+
+    <nav class="abas" aria-label="Navegação principal">
+      <button class="aba ativa" data-aba="analise">Análise</button>
+      <button class="aba" data-aba="centros">Centros</button>
+      <button class="aba" data-aba="info">Informações</button>
+    </nav>
+
+    <section id="aba-analise" class="conteudo-aba ativo">
+      <section class="card">
+        <h2>Analisar imagem</h2>
+        <p class="texto-apoio">
+          Tire ou envie uma foto mantendo distância segura do animal.
+        </p>
+
+        <label class="botao-upload" for="imagemInput">Selecionar ou tirar foto</label>
+        <input type="file" id="imagemInput" accept="image/*">
+
+        <img id="preview" alt="Prévia da imagem enviada">
+
+        <h2>Resultado</h2>
+        <p id="resultado" class="resultado">Envie uma imagem para analisar.</p>
+      </section>
+
+      <section id="orientacaoCentros" class="card destaque-centros oculto">
+        <h2>Centros indicados</h2>
+        <p id="mensagemCentros" class="texto-apoio"></p>
+        <button id="btnLocalizacaoAnalise" class="botao-principal">Usar minha localização</button>
+        <div id="listaCentrosAnalise" class="lista-centros"></div>
+      </section>
+    </section>
+
+    <section id="aba-centros" class="conteudo-aba">
+      <section class="card">
+        <h2>Centros com soro antiveneno</h2>
+        <p class="texto-apoio">
+          Use sua localização para ordenar os serviços por distância. Em emergência, ligue 192 ou procure atendimento imediatamente.
+        </p>
+
+        <div class="linha-botoes">
+          <button id="btnLocalizacaoCentros" class="botao-principal">Ordenar por distância</button>
+          <button id="btnMostrarTodos" class="botao-secundario">Mostrar todos</button>
+        </div>
+
+        <div class="filtro-coral">
+          <label>
+            <input type="checkbox" id="filtroElapidico">
+            Mostrar apenas unidades com soro elapídico
+          </label>
+        </div>
+
+        <div id="listaCentrosGeral" class="lista-centros"></div>
+      </section>
+    </section>
+
+    <section id="aba-info" class="conteudo-aba">
+      <section class="card info">
+        <h2>Conduta inicial em caso de acidente</h2>
+        <ul>
+          <li>Não tente capturar ou manusear a serpente.</li>
+          <li>Não faça torniquete, cortes ou sucção do local.</li>
+          <li>Mantenha a pessoa em repouso e procure atendimento médico.</li>
+          <li>Em caso de sintomas ou mordida suspeita, ligue 192/SAMU.</li>
+          <li>A imagem ajuda na triagem, mas não substitui avaliação médica.</li>
+        </ul>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>

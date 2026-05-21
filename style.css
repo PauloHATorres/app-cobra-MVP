@@ -1,0 +1,214 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 24px;
+  background: #edf3ed;
+  color: #1d2d22;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.topo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #d9eadc;
+  color: #1f5a33;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+h1 {
+  color: #1f3d2b;
+  margin: 6px 0;
+}
+
+h2 {
+  margin-top: 0;
+  color: #1f3d2b;
+}
+
+.subtitulo,
+.texto-apoio {
+  color: #4c5c50;
+  line-height: 1.4;
+}
+
+.abas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.aba {
+  border: 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: #dce7dd;
+  color: #1f3d2b;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.aba.ativa {
+  background: #1f6f3d;
+  color: white;
+}
+
+.conteudo-aba {
+  display: none;
+}
+
+.conteudo-aba.ativo {
+  display: block;
+}
+
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(31, 61, 43, 0.10);
+}
+
+#imagemInput {
+  display: none;
+}
+
+.botao-upload,
+.botao-principal,
+.botao-secundario {
+  display: inline-block;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.botao-upload,
+.botao-principal {
+  background: #1f6f3d;
+  color: white;
+}
+
+.botao-secundario {
+  background: #e5ece6;
+  color: #1f3d2b;
+}
+
+.linha-botoes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+#preview {
+  display: none;
+  border-radius: 14px;
+  margin: 20px auto;
+  max-width: 100%;
+  width: 320px;
+}
+
+.resultado {
+  white-space: pre-line;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.35;
+}
+
+.destaque-centros {
+  border: 2px solid #f0c36a;
+}
+
+.oculto {
+  display: none;
+}
+
+.lista-centros {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.centro-card {
+  text-align: left;
+  border: 1px solid #dce7dd;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fbfdfb;
+}
+
+.centro-card h3 {
+  margin: 0 0 4px;
+  color: #1f3d2b;
+}
+
+.cidade,
+.distancia {
+  margin: 4px 0;
+  color: #4c5c50;
+}
+
+.distancia {
+  font-weight: bold;
+  color: #1f6f3d;
+}
+
+.acoes-centro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.acoes-centro a {
+  text-decoration: none;
+  background: #1f6f3d;
+  color: white;
+  border-radius: 12px;
+  padding: 9px 11px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.filtro-coral {
+  margin: 14px 0;
+  font-weight: bold;
+}
+
+.info ul {
+  text-align: left;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 14px;
+  }
+
+  .abas {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
