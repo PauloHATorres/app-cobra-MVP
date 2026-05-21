@@ -1,9 +1,14 @@
-const URL_MODELO = "./modelo_tfjs/";
+const URL_CLASSIFICADOR = "./modelo_tfjs/";
+const URL_DETECTOR = "./modelo_detector/model.json";
+
+let modeloDetector;
 let model;
+
 let ultimaAnalisePrecisaElapidico = false;
 let ultimaPosicaoUsuario = null;
 
-const LIMIAR_NAO_COBRA = 0.60;
+const LIMIAR_DETECTOR_COBRA = 0.25;
+const LIMIAR_CLASSIFICADOR_INCERTO = 0.60;
 const LIMIAR_RISCO_ALTO = 0.60;
 const LIMIAR_OUTRAS_COBRAS = 0.70;
 const LIMIAR_CORAL = 0.50;
@@ -49,28 +54,117 @@ const centros = [
 
 async function carregarModelo() {
   try {
+    document.getElementById("resultado").innerText =
+      "Carregando modelos...";
+
+    modeloDetector = await tf.loadGraphModel(URL_DETECTOR);
 
     model = await tf.loadLayersModel(
-      "./modelo_tfjs/model.json"
+      URL_CLASSIFICADOR + "model.json"
     );
 
-    console.log("Modelo carregado!");
+    console.log("Detector YOLO carregado!");
+    console.log("Classificador antigo carregado!");
+
+    document.getElementById("resultado").innerText =
+      "Envie uma imagem para analisar.";
 
   } catch (erro) {
-
-    console.error("Erro ao carregar modelo:", erro);
+    console.error("Erro ao carregar modelos:", erro);
 
     document.getElementById("resultado").innerText =
       "Erro ao carregar o modelo.";
-
   }
+}
+
+async function detectarCobra(imagem) {
+  if (!modeloDetector) return false;
+
+  const tensor = tf.browser.fromPixels(imagem)
+    .resizeNearestNeighbor([640, 640])
+    .toFloat()
+    .div(255)
+    .expandDims();
+
+  let saida;
+  let temCobra = false;
+  let maiorConfianca = 0;
+
+  try {
+    saida = await modeloDetector.executeAsync(tensor);
+
+    let tensorDeteccoes = null;
+
+    if (Array.isArray(saida)) {
+      tensorDeteccoes = saida.find(t => {
+        const shape = t.shape;
+        return shape.length === 3 && shape[2] === 6;
+      }) || saida[0];
+    } else if (saida["Identity:0"]) {
+      tensorDeteccoes = saida["Identity:0"];
+    } else {
+      const valores = Object.values(saida);
+      tensorDeteccoes = valores.find(t => {
+        const shape = t.shape;
+        return shape.length === 3 && shape[2] === 6;
+      }) || valores[0];
+    }
+
+    const dados = await tensorDeteccoes.data();
+
+    for (let i = 0; i < dados.length; i += 6) {
+      const confianca = dados[i + 4];
+
+      if (confianca > maiorConfianca) {
+        maiorConfianca = confianca;
+      }
+
+      if (confianca >= LIMIAR_DETECTOR_COBRA) {
+        temCobra = true;
+        break;
+      }
+    }
+
+    console.log("Maior confiança do detector:", maiorConfianca);
+    console.log("Detector encontrou cobra?", temCobra);
+
+  } catch (erro) {
+    console.error("Erro ao rodar detector:", erro);
+    temCobra = false;
+  } finally {
+    tensor.dispose();
+    if (saida) tf.dispose(saida);
+  }
+
+  return temCobra;
 }
 
 async function analisarImagem(imagem) {
 
-  if (!model) {
+  if (!model || !modeloDetector) {
     document.getElementById("resultado").innerText =
       "Modelo ainda carregando...";
+    return;
+  }
+
+  document.getElementById("resultado").innerText =
+    "Analisando imagem...";
+
+  const temCobra = await detectarCobra(imagem);
+
+  if (!temCobra) {
+    const classificacao =
+      "🟢 NÃO PARECE SER SERPENTE";
+
+    const recomendacao =
+      "A imagem não parece conter uma serpente. Ainda assim, evite contato com animais desconhecidos.";
+
+    ultimaAnalisePrecisaElapidico = false;
+    esconderCentrosNaAnalise();
+
+    document.getElementById("resultado").innerText =
+      `${classificacao}\n\n${recomendacao}`;
+
     return;
   }
 
@@ -119,19 +213,7 @@ async function analisarImagem(imagem) {
   let classificacao = "";
   let recomendacao = "";
 
-  if (naoCobra >= LIMIAR_NAO_COBRA) {
-
-    classificacao =
-      "🟢 NÃO PARECE SER SERPENTE";
-
-    recomendacao =
-      "A imagem não parece conter uma serpente. Ainda assim, evite contato com animais desconhecidos.";
-
-    ultimaAnalisePrecisaElapidico = false;
-
-    esconderCentrosNaAnalise();
-
-  } else if (possivelCoral) {
+  if (possivelCoral) {
 
     classificacao =
       "🔴 ALTO RISCO DE SERPENTE PEÇONHENTA";
@@ -168,17 +250,29 @@ async function analisarImagem(imagem) {
 
     mostrarBlocoCentros(false);
 
+  } else if (naoCobra >= LIMIAR_CLASSIFICADOR_INCERTO) {
+
+    classificacao =
+      "🟡 SERPENTE DETECTADA — CLASSIFICAÇÃO INCERTA";
+
+    recomendacao =
+      "O detector encontrou uma possível serpente na imagem, mas o classificador antigo não conseguiu confirmar o grupo com segurança. Mantenha distância e, em caso de mordida ou contato suspeito, procure atendimento médico.";
+
+    ultimaAnalisePrecisaElapidico = false;
+
+    mostrarBlocoCentros(false);
+
   } else {
 
     classificacao =
       "⚠️ RESULTADO INCONCLUSIVO";
 
     recomendacao =
-      "A imagem não permitiu uma classificação confiável. Tente outra foto com melhor iluminação e distância segura.";
+      "A imagem parece conter uma serpente, mas não permitiu uma classificação confiável. Tente outra foto com melhor iluminação e distância segura.";
 
     ultimaAnalisePrecisaElapidico = false;
 
-    esconderCentrosNaAnalise();
+    mostrarBlocoCentros(false);
   }
 
   document.getElementById("resultado").innerText =
