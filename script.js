@@ -7,7 +7,7 @@ let model;
 let ultimaAnalisePrecisaElapidico = false;
 let ultimaPosicaoUsuario = null;
 
-const LIMIAR_DETECTOR_COBRA = 0.25;
+const LIMIAR_DETECTOR_COBRA = 0.30;
 const LIMIAR_CLASSIFICADOR_INCERTO = 0.60;
 const LIMIAR_RISCO_ALTO = 0.60;
 const LIMIAR_OUTRAS_COBRAS = 0.70;
@@ -256,7 +256,7 @@ async function analisarImagem(imagem) {
       "🟡 SERPENTE DETECTADA — CLASSIFICAÇÃO INCERTA";
 
     recomendacao =
-      "O detector encontrou uma possível serpente na imagem, mas o classificador antigo não conseguiu confirmar o grupo com segurança. Mantenha distância e, em caso de mordida ou contato suspeito, procure atendimento médico.";
+      "O detector encontrou uma possível serpente na imagem, mas o classificador não conseguiu confirmar o grupo com segurança. Mantenha distância e, em caso de mordida ou contato suspeito, procure atendimento médico.";
 
     ultimaAnalisePrecisaElapidico = false;
 
